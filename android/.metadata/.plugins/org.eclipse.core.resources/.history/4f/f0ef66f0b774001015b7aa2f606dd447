@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, Convert!</string>
+    <string name="app_name">Temperature Converter</string>
+    <color name="myColor">#3399CC</color>
+    <string name="myClickHandler">myClickHandler</string>
+    <string name="celsius">to Celsius</string>
+    <string name="fahrenheit">to Fahrenheit</string>
+    <string name="calc">Calculate</string>
+    <string name="switchLight">switch light</string>
+    <string name="switchAirConOFF">air-conditioner off</string>
+    <string name="currentTemp">Current Temperature:</string>
+    <string name="checkTemp">current room temperature</string>
+    <string name="killServer">kill server</string>
+    <string name="connect">connect to 192.168.11.2 ...</string>
+    <string name="switchAirconON">air-conditioner on</string>
+    <string name="toggleLight">toggle light</string>
+</resources>

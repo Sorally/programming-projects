@@ -1,0 +1,6 @@
+Home automation over USB using v-usb.
+
+an IR LED connected to an attiny45 controls anything that can be controlled via
+infrared within striking distance.
+
+Extremeley buggy \(^^)/

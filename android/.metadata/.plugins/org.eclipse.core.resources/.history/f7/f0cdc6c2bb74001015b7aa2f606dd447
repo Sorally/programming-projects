@@ -1,0 +1,140 @@
+package com.sorally.autohome;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+//import android.widget.EditText;
+//import android.widget.RadioButton;
+import android.widget.Toast;
+//import android.app.AlertDialog;
+/////
+//import android.widget.Button;
+//import android.content.DialogInterface;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+//import android.view.ContextMenu;  
+//import android.view.ContextMenu.ContextMenuInfo; 
+
+
+public class ControlPanel extends Activity {
+	//private EditText text;
+	private Socket s;
+	private OutputStream out;
+	private PrintWriter output;
+	private String response;
+	String serverAddress = "192.168.11.2";
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getTitle().equals("wi-fi")) {
+			serverAddress = "192.168.11.2";
+			Toast.makeText(this, "Server address set to 192.168.11.2", Toast.LENGTH_SHORT).show();
+		} else if (item.getTitle().equals("Internet")) {
+			serverAddress = "59.191.156.153";
+			Toast.makeText(this, "Server address set to 59.191.156.153", Toast.LENGTH_SHORT).show();
+		} else if (item.getTitle().equals("Kill Server")) {
+			die();
+		}
+		return true;
+	}
+	
+	public void connectTo() {
+		// TODO Auto-generated method stub
+		try {
+      		s = new Socket(serverAddress, 27015);
+	        //outgoing stream redirect to socket
+	        out = s.getOutputStream();
+	        output = new PrintWriter(out);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
+	public void switchLight(View view) {
+		
+		sendMsg("switch light", 0);
+	}
+
+	public void toggleLight(View view) {
+		
+		sendMsg("toggle light", 0);
+	}
+
+	
+	public void airconOn(View view) {
+
+		sendMsg("airconON", 0);
+	}
+
+	public void airconOff(View view) {
+
+		sendMsg("airconOFF", 0);
+	}
+
+	
+	public void checkTemperature(View view) {
+		sendMsg("temperature", 1);
+	}	
+	
+	
+	public void die() {
+		
+		sendMsg("die", 0);
+		
+	}
+	public void sendMsg(String string, int getResponse) {
+			
+		connectTo();
+		output.println(string);
+		output.flush();
+		
+		
+		try {
+			if (getResponse == 1) {
+				BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+				response = input.readLine();
+				Toast.makeText(getApplicationContext(), response.substring(0, 2), Toast.LENGTH_SHORT).show();
+				input.close();
+			}
+
+			out.close();
+			output.close();
+			
+			out = null;
+			output = null;
+			
+			//Close connection
+	        s.close();
+		} catch (UnknownHostException e) {
+	    	Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+	    } catch (IOException e) {
+	    	Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+	    }
+	}
+}

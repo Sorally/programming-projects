@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	
+	<head>
+
+		<script type="text/javascript" src="../../code/jquery-1.4.4.min.js"></script>
+		<script>
+
+/******************************************************************************/
+
+
+
+$(document).ready(function () {
+
+	var filesUpload = document.getElementById("files-upload");
+
+	filesUpload.addEventListener("change", function () {
+		if (this.files.length == 1) {
+			$('#info').html(this.files.length + " file");
+			$('#container').html("<img src='images/" + this.files[0].fileName + "' width=500 style='display:block;margin-left:auto;margin-right:auto;' />");
+		} else {
+			$('#info').html(this.files.length + " files");
+		}			
+	}, false);
+
+});
+
+
+
+
+
+/******************************************************************************/
+		</script>
+
+	</head>
+	
+	<body>
+
+		<form action="#" method="post" enctype="multipart/form-data">
+		  <input id="files-upload" type="file" multiple>
+		  <input type='submit'>
+		</form>
+		<span id="info">0 files</span> <br/>
+		<div id="container" style="display:block;margin-left:auto;margin-right:auto;width:1400px;height:700px;border:1px solid #ccc;"></div>
+	</body>
+
+</html>		
+
+

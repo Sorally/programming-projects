@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item android:title="wi-fi" android:id="@+id/wifi"></item>
+    <item android:title="Internet" android:id="@+id/internet"></item><item android:id="@+id/killServer" android:title="Kill Server"></item>
+</menu>
