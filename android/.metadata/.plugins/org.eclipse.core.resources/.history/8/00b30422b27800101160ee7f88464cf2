@@ -128,9 +128,9 @@ public class ControlPanel extends Activity {
 			if (getResponse == 1) {
 				BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				response = input.readLine();
-				//Toast.makeText(getApplicationContext(), response.substring(0, 2), Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), response.substring(0, 2), Toast.LENGTH_SHORT).show();
 				TextView t= (TextView)findViewById(R.id.textView1);
-				t.setText(response + (char) 0x00B0 + "C");
+				t.setText(response);
 				input.close();
 			}
 

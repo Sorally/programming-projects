@@ -49,26 +49,6 @@ int             err;
     return dev;
 }
 
-/* ------------------------------------------------------------------------- */
-
-static void hexdump(char *buffer, int len)
-{
-int     i;
-FILE    *fp = stdout;
-
-    for(i = 0; i < len; i++){
-        if(i != 0){
-            if(i % 16 == 0){
-                fprintf(fp, "\n");
-            }else{
-                fprintf(fp, " ");
-            }
-        }
-        fprintf(fp, "0x%02x", buffer[i] & 0xff);
-    }
-    if(i != 0)
-        fprintf(fp, "\n");
-}
 
 static int  hexread(char *buffer, char *string, int buflen)
 {

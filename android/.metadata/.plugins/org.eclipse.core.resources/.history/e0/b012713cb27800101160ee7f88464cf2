@@ -9,7 +9,7 @@
     <string name="calc">Calculate</string>
     <string name="switchLight">switch light</string>
     <string name="switchAirConOFF">air-conditioner off</string>
-    <string name="currentTemp">0</string>
+    <string name="currentTemp">Current Temperature:</string>
     <string name="checkTemp">current room temperature</string>
     <string name="killServer">kill server</string>
     <string name="connect">connect to 192.168.11.2 ...</string>

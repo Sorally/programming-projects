@@ -17,15 +17,15 @@
 
 # Use the following 3 lines on Windows and comment out the 3 above:
 USBFLAGS=
-USBLIBS=    -lhid -lusb -lsetupapi -lws2_32
-EXE_SUFFIX= .exe
+USBLIBS=-lhid -lusb -lsetupapi -lws2_32
+EXE_SUFFIX=.exe
 APP=autohome_svr
-CC=				gcc
-CFLAGS=			-O -Wall $(USBFLAGS)
-LIBS=			$(USBLIBS)
+CC=gcc
+CFLAGS=-O -Wall $(USBFLAGS)
+LIBS=$(USBLIBS)
 
-OBJ=		autohome_svr.o hidtool.o hiddata.o
-PROGRAM=	$(APP)$(EXE_SUFFIX)
+OBJ=autohome_svr.o hidtool.o hiddata.o
+PROGRAM=$(APP)$(EXE_SUFFIX)
 
 all: $(PROGRAM)
 
@@ -39,4 +39,4 @@ strip: $(PROGRAM)
 	strip $(PROGRAM)
 
 clean:
-	rm -f $(OBJ) $(PROGRAM) *.exe
+	rm -f $(OBJ) $(PROGRAM)

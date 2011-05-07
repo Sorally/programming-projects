@@ -5,34 +5,38 @@
  */
 
 #undef UNICODE
-
 #define WIN32_LEAN_AND_MEAN
-
-#define WINVER 0x0501		// for getaddrinfo, freeaddrinfo
+#define WINVER 0x0501	// for getaddrinfo, freeaddrinfo
+#define DEFAULT_BUFLEN 512
+#define DEFAULT_PORT "27015"
 
 #include <winsock2.h>
 #include <windows.h>
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 #include "hidtool.h"
 
 // Need to link with Ws2_32.lib
 //#pragma comment (lib, "Ws2_32.lib")
-// #pragma comment (lib, "Mswsock.lib")
+//#pragma comment (lib, "Mswsock.lib")
 
-#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
 
-// threaded procedure
+/******************************************************************************
+ * msgbox()
+ *
+ * threaded procedure
+ *****************************************************************************/
 DWORD WINAPI msgbox(LPVOID iValue) {
 	MessageBox(0, iValue, __FILE__, MB_OK);
 	return 0;
 }
 
-
-int main(void) {
+/******************************************************************************
+ * main()
+ *
+ *****************************************************************************/
+int main(int argc, char* argv[]) {
 	
 	WSADATA wsaData;
 	SOCKET ListenSocket = INVALID_SOCKET;
@@ -44,20 +48,7 @@ int main(void) {
 	int recvbuflen = DEFAULT_BUFLEN;
 	int open_connection = 1;
 	SYSTEMTIME lt;
-
-	// Get local IP address
-	char szHostName[DEFAULT_BUFLEN];
-	struct hostent *host_entry;
-	char * szLocalIP;
-
-	gethostname(szHostName, DEFAULT_BUFLEN);
-	host_entry = gethostbyname(szHostName);
-	szLocalIP = inet_ntoa(*(struct in_addr *)*host_entry->h_addr_list);
-
-	// print welcome message
-	GetLocalTime(&lt);
-	printf("[%02d.%02d.%02d %02d:%02d:%02d] starting up on %s:%s\n", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond, szLocalIP, DEFAULT_PORT);
-
+	int server_started = 0;
 
 start:
 
@@ -68,7 +59,23 @@ start:
 		printf("WSAStartup failed with error: %d\n", iResult);
 		return 1;
 	}
-	
+
+	if (!server_started) {
+		// Get local IP address
+		char szHostName[DEFAULT_BUFLEN];
+		struct hostent *host_entry;
+		char * szLocalIP;
+
+		gethostname(szHostName, DEFAULT_BUFLEN);
+		host_entry = gethostbyname(szHostName);
+		szLocalIP = inet_ntoa(*(struct in_addr *)*host_entry->h_addr_list);
+
+		// print welcome message
+		GetLocalTime(&lt);
+		printf("[%02d.%02d.%02d %02d:%02d:%02d] server starting on %s:%s\n", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond, szLocalIP, DEFAULT_PORT);
+		server_started = 1;
+	}
+
 	ZeroMemory(&hints, sizeof(hints));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
@@ -103,8 +110,8 @@ start:
 	}
 
 	freeaddrinfo(result);
-
 	iResult = listen(ListenSocket, SOMAXCONN);
+
 	if (iResult == SOCKET_ERROR) {
 		printf("listen failed with error: %d\n", WSAGetLastError());
 		closesocket(ListenSocket);
@@ -136,7 +143,6 @@ start:
 		goto start;
 	}
 
-
 	GetLocalTime(&lt);
 	memset(retnbuf, 0, DEFAULT_BUFLEN);
 	printf("[%02d.%02d.%02d %02d:%02d:%02d] ", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond);
@@ -153,9 +159,7 @@ start:
 
 		printf("Received die command, so long old friend\n");
 		open_connection = 0;
-		closesocket(ClientSocket);
-		WSACleanup();
-		return 1;
+		goto cleanup;
 	}
 
 	if (strcmp(recvbuf, "temperature\n") == 0) {
@@ -163,7 +167,6 @@ start:
 		//HANDLE hThread1 = CreateThread(NULL, 0, msgbox, &recvbuf, 0, 0);
 		int current_temp;
 
-		Beep(500, 100);
 		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
@@ -175,7 +178,6 @@ start:
 		//}
 		//printf(">%s<", retnbuf); 
 	} else if (strcmp(recvbuf, "airconON\n") == 0) {
-		Beep(600, 100);
 		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
@@ -183,7 +185,6 @@ start:
 		args[2] = "3";
 		interface(3, args);
 	} else if (strcmp(recvbuf, "airconOFF\n") == 0) {
-		Beep(700, 100);
 		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
@@ -191,7 +192,6 @@ start:
 		args[2] = "4";
 		interface(3, args);	
 	} else if (strcmp(recvbuf, "toggle light\n") == 0) {
-		Beep(800, 100);
 		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
@@ -199,7 +199,6 @@ start:
 		args[2] = "5";
 		interface(3, args);	
 	} else if (strcmp(recvbuf, "switch light\n") == 0) {
-		Beep(900, 100);
 		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
@@ -207,7 +206,7 @@ start:
 		args[2] = "6";
 		interface(3, args);	
 	} else {
-		Beep(100, 300);
+		Beep(200, 600);
 		printf("unimplemented:%s", recvbuf);
 	}
 
@@ -215,9 +214,7 @@ start:
 	iSendResult = send(ClientSocket, retnbuf, strlen(retnbuf), 0);
 	if (iSendResult == SOCKET_ERROR) {
 		printf("send failed with error: %d\n", WSAGetLastError());
-		closesocket(ClientSocket);
-		WSACleanup();
-		return 1;
+		goto cleanup;
 	}
 
 	closesocket(ClientSocket);
@@ -230,11 +227,10 @@ start:
 	iResult = shutdown(ClientSocket, SD_SEND);
 	if (iResult == SOCKET_ERROR) {
 		printf("shutdown failed with error: %d\n", WSAGetLastError());
-		closesocket(ClientSocket);
-		WSACleanup();
-		return 1;
+		goto cleanup;
 	}
 
+cleanup:
 	// cleanup
 	closesocket(ClientSocket);
 	WSACleanup();

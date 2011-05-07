@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:background="@color/myColor" android:layout_height="match_parent" android:orientation="vertical">
+    <TextView android:id="@+id/textView1" android:gravity="center"  android:textSize="50sp" android:text="@string/currentTemp" android:layout_width="match_parent" android:layout_weight="1" android:layout_height="wrap_content" android:layout_gravity="bottom"></TextView>
+
+    <Button android:id="@+id/button1" android:text="@string/checkTemp" android:onClick="checkTemperature" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_gravity="fill"></Button>
+
+    <TableRow android:layout_height="wrap_content" android:id="@+id/tableRow2" android:layout_width="match_parent" android:baselineAligned="false" android:layout_weight="1">
+	    <Button android:id="@+id/button2" android:text="@string/switchLight" android:onClick="switchLight" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_gravity="fill"></Button>
+	    <Button android:id="@+id/button5" android:text="@string/toggleLight" android:onClick="toggleLight" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_gravity="fill"></Button>
+    </TableRow>
+    
+    <TableRow android:layout_height="wrap_content" android:id="@+id/tableRow1" android:layout_width="match_parent" android:layout_weight="1" android:baselineAligned="false">
+	    <Button android:onClick="airconOn" android:id="@+id/button3" android:text="@string/switchAirconON" ></Button>
+	    <Button android:onClick="airconOff" android:id="@+id/button4" android:text="@string/switchAirConOFF" ></Button>
+    </TableRow>
+</LinearLayout>
