@@ -3,7 +3,7 @@
  * http://msdn.microsoft.com/en-us/library/ms738545%28v=vs.85%29.aspx
  *
  */
- 
+
 #undef UNICODE
 
 #define WIN32_LEAN_AND_MEAN
@@ -34,41 +34,41 @@ DWORD WINAPI msgbox(LPVOID iValue) {
 
 int main(void) {
 	
-    WSADATA wsaData;
-    SOCKET ListenSocket = INVALID_SOCKET;
+	WSADATA wsaData;
+	SOCKET ListenSocket = INVALID_SOCKET;
 	SOCKET ClientSocket = INVALID_SOCKET;
-    struct addrinfo *result = NULL, hints;
-    char recvbuf[DEFAULT_BUFLEN];
-    char retnbuf[DEFAULT_BUFLEN];
-    int iResult, iSendResult;
-    int recvbuflen = DEFAULT_BUFLEN;
+	struct addrinfo *result = NULL, hints;
+	char recvbuf[DEFAULT_BUFLEN];
+	char retnbuf[DEFAULT_BUFLEN];
+	int iResult, iSendResult;
+	int recvbuflen = DEFAULT_BUFLEN;
 	int open_connection = 1;
 	SYSTEMTIME lt;
 
 start:
 
-    // Initialize Winsock
-    memset(recvbuf, 0, DEFAULT_BUFLEN);
-    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-    if (iResult != 0) {
-        printf("WSAStartup failed with error: %d\n", iResult);
-        return 1;
-    }
+	// Initialize Winsock
+	memset(recvbuf, 0, DEFAULT_BUFLEN);
+	iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+	if (iResult != 0) {
+		printf("WSAStartup failed with error: %d\n", iResult);
+		return 1;
+	}
+	
+	ZeroMemory(&hints, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = IPPROTO_TCP;
+	hints.ai_flags = AI_PASSIVE;
+	
+	// Resolve the server address and port
+	iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
+	if ( iResult != 0 ) {
+		printf("getaddrinfo failed with error: %d\n", iResult);
+		WSACleanup();
+		return 1;
+	}
 
-    ZeroMemory(&hints, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
-    hints.ai_flags = AI_PASSIVE;
-
-    // Resolve the server address and port
-    iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
-    if ( iResult != 0 ) {
-        printf("getaddrinfo failed with error: %d\n", iResult);
-        WSACleanup();
-        return 1;
-    }
-    
 	// Get local IP address
 	char szHostName[255];
 	struct hostent *host_entry;
@@ -77,34 +77,34 @@ start:
 	host_entry = gethostbyname(szHostName);
 	szLocalIP = inet_ntoa (*(struct in_addr *)*host_entry->h_addr_list);
 
-    // Create a SOCKET for connecting to server
-    ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-    if (ListenSocket == INVALID_SOCKET) {
-        printf("socket failed with error: %ld\n", (long) WSAGetLastError());
-        freeaddrinfo(result);
-        WSACleanup();
-        return 1;
-    }
+	// Create a SOCKET for connecting to server
+	ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+	if (ListenSocket == INVALID_SOCKET) {
+		printf("socket failed with error: %ld\n", (long) WSAGetLastError());
+		freeaddrinfo(result);
+		WSACleanup();
+		return 1;
+	}
 
-    // Setup the TCP listening socket
-    iResult = bind( ListenSocket, result->ai_addr, (int)result->ai_addrlen);
-    if (iResult == SOCKET_ERROR) {
-        printf("bind failed with error: %d\n", WSAGetLastError());
-        freeaddrinfo(result);
-        closesocket(ListenSocket);
-        WSACleanup();
-        return 1;
-    }
+	// Setup the TCP listening socket
+	iResult = bind( ListenSocket, result->ai_addr, (int)result->ai_addrlen);
+	if (iResult == SOCKET_ERROR) {
+		printf("bind failed with error: %d\n", WSAGetLastError());
+		freeaddrinfo(result);
+		closesocket(ListenSocket);
+		WSACleanup();
+		return 1;
+	}
 
-    freeaddrinfo(result);
+	freeaddrinfo(result);
 
-    iResult = listen(ListenSocket, SOMAXCONN);
-    if (iResult == SOCKET_ERROR) {
-        printf("listen failed with error: %d\n", WSAGetLastError());
-        closesocket(ListenSocket);
-        WSACleanup();
-        return 1;
-    }
+	iResult = listen(ListenSocket, SOMAXCONN);
+	if (iResult == SOCKET_ERROR) {
+		printf("listen failed with error: %d\n", WSAGetLastError());
+		closesocket(ListenSocket);
+		WSACleanup();
+		return 1;
+	}
 
 	// print welcome message
 	GetLocalTime(&lt);
@@ -112,27 +112,27 @@ start:
 
 	//printf("Listening on %s:%s\n", szLocalIP, DEFAULT_PORT);
 
-    // Accept a client socket (blocking)
-    ClientSocket = accept(ListenSocket, NULL, NULL);
-    
-    if (ClientSocket == INVALID_SOCKET) {
-        printf("accept failed with error: %d\n", WSAGetLastError());
-        closesocket(ListenSocket);
-        WSACleanup();
-        return 1;
-    }
+	// Accept a client socket (blocking)
+	ClientSocket = accept(ListenSocket, NULL, NULL);
 
-    // No longer need server socket
-    closesocket(ListenSocket);
+	if (ClientSocket == INVALID_SOCKET) {
+		printf("accept failed with error: %d\n", WSAGetLastError());
+		closesocket(ListenSocket);
+		WSACleanup();
+		return 1;
+	}
+
+	// No longer need server socket
+	closesocket(ListenSocket);
 	
-    // Receive until the peer shuts down the connection
-    do {
-        iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+	// Receive until the peer shuts down the connection
+	do {
+		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 		if (iResult <= 0) {
-		    printf("recv failed with error: %d\n", WSAGetLastError());
-            closesocket(ClientSocket);
-            WSACleanup();
-            //return 1;
+			printf("recv failed with error: %d\n", WSAGetLastError());
+			closesocket(ClientSocket);
+			WSACleanup();
+			//return 1;
 			goto start;
 		}
 
@@ -157,7 +157,7 @@ start:
 			WSACleanup();
 			return 1;
 		}
-							
+
 		if (strcmp(recvbuf, "temperature\n") == 0) {
 			//int i = 1;
 			//HANDLE hThread1 = CreateThread(NULL, 0, msgbox, &recvbuf, 0, 0);
@@ -173,9 +173,9 @@ start:
 			//if (current_temp > 0) {
 			itoa(current_temp, retnbuf, 10);
 			//}
-	        //printf(">%s<", retnbuf); 
+			//printf(">%s<", retnbuf); 
 		} else if (strcmp(recvbuf, "airconON\n") == 0) {
-        	Beep(600, 100);
+			Beep(600, 100);
 			printf(recvbuf);
 			char *args[3];
 			args[0] = 0;
