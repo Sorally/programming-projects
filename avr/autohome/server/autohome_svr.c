@@ -223,22 +223,22 @@ start:
 		closesocket(ClientSocket);
 		WSACleanup();
 		iResult = 0;
-        //printf("Bytes sent: %d\n", iSendResult);
+		//printf("Bytes sent: %d\n", iSendResult);
 	} while (iResult > 0);
 
 	goto start;
-	
-    // shutdown the connection since we're done
-    iResult = shutdown(ClientSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-        closesocket(ClientSocket);
-        WSACleanup();
-        return 1;
-    }
 
-    // cleanup
-    closesocket(ClientSocket);
-    WSACleanup();
-    return 0;
+	// shutdown the connection since we're done
+	iResult = shutdown(ClientSocket, SD_SEND);
+	if (iResult == SOCKET_ERROR) {
+		printf("shutdown failed with error: %d\n", WSAGetLastError());
+		closesocket(ClientSocket);
+		WSACleanup();
+		return 1;
+	}
+
+	// cleanup
+	closesocket(ClientSocket);
+	WSACleanup();
+	return 0;
 }
