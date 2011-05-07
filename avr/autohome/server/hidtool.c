@@ -16,9 +16,8 @@
 
 /* ------------------------------------------------------------------------- */
 
-static char *usbErrorMessage(int errCode)
-{
-static char buffer[80];
+static char *usbErrorMessage(int errCode) {
+	static char buffer[80];
 
     switch(errCode){
         case USBOPEN_ERR_ACCESS:      return "Access to device denied";
@@ -31,17 +30,16 @@ static char buffer[80];
     return NULL;    /* not reached */
 }
 
-static usbDevice_t  *openDevice(int useReportIds)
-{
-usbDevice_t     *dev = NULL;
-unsigned char   rawVid[2] = {USB_CFG_VENDOR_ID}, rawPid[2] = {USB_CFG_DEVICE_ID};
-char            vendorName[] = {USB_CFG_VENDOR_NAME, 0}, productName[] = {USB_CFG_DEVICE_NAME, 0};
-int             vid = rawVid[0] + 256 * rawVid[1];
-int             pid = rawPid[0] + 256 * rawPid[1];
-int             err;
+static usbDevice_t  *openDevice(int useReportIds) {
+	usbDevice_t     *dev = NULL;
+	unsigned char   rawVid[2] = {USB_CFG_VENDOR_ID}, rawPid[2] = {USB_CFG_DEVICE_ID};
+	char            vendorName[] = {USB_CFG_VENDOR_NAME, 0}, productName[] = {USB_CFG_DEVICE_NAME, 0};
+	int             vid = rawVid[0] + 256 * rawVid[1];
+	int             pid = rawPid[0] + 256 * rawPid[1];
+	int             err;
 
-		//printf("%susing useReportIds\n", useReportIds?"":"not ");
-		
+	//printf("%susing useReportIds\n", useReportIds?"":"not ");
+
     if((err = usbhidOpenDevice(&dev, vid, vendorName, pid, productName, useReportIds)) != 0){
         fprintf(stderr, "error finding %s: %s\n", productName, usbErrorMessage(err));
         return NULL;
@@ -50,10 +48,9 @@ int             err;
 }
 
 
-static int  hexread(char *buffer, char *string, int buflen)
-{
-char    *s;
-int     pos = 0;
+static int  hexread(char *buffer, char *string, int buflen) {
+	char    *s;
+	int     pos = 0;
 
     while((s = strtok(string, ", ")) != NULL && pos < buflen){
         string = NULL;
@@ -78,12 +75,12 @@ int interface(int argc, char **argv, char *temperature) {
 	int reportID = 0;
 	int useReportIds = 1;
 
-	if(argc < 3){
-  	usage(argv[0]);
-    exit(1);
-  }
-    
-        
+	if (argc < 3) {
+		usage(argv[0]);
+		exit(1);
+	}
+
+
     reportID = argv[2][0] - 0x30;
     
     if (reportID == 0) {
@@ -95,17 +92,19 @@ int interface(int argc, char **argv, char *temperature) {
     		exit(1);
 		}
 
-    if(strcasecmp(argv[1], "read") == 0){
-        int len = sizeof(buffer);
-        
-	        if((err = usbhidGetReport(dev, reportID, buffer, &len)) != 0){
-	            fprintf(stderr, "error reading data: %s\n", usbErrorMessage(err));
-	        }else{
-	            //hexdump(buffer + 1, sizeof(buffer) - 1);
-	            //printf("%d %d", buffer[0], buffer[1]);
-	           	usbhidCloseDevice(dev);
-    					return buffer[0];
-	        }
+	if(strcasecmp(argv[1], "read") == 0){
+		int len = sizeof(buffer);
+		memset(buffer, 0, sizeof(buffer));
+		if((err = usbhidGetReport(dev, reportID, buffer, &len)) != 0){
+			fprintf(stderr, "error reading data: %s\n", usbErrorMessage(err));
+		} else {
+			//hexdump(buffer + 1, sizeof(buffer) - 1);
+			int i;
+			buffer[5] = 0;
+			memcpy(temperature, buffer, 6);
+			usbhidCloseDevice(dev);
+			return 0;
+		}
     }else if(strcasecmp(argv[1], "write") == 0){
         int i, pos;
         memset(buffer, 0, sizeof(buffer));

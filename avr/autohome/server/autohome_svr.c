@@ -172,39 +172,38 @@ start:
 		args[0] = 0;
 		args[1] = "read";
 		args[2] = "2";
-		current_temp = interface(3, args);
-		//if (current_temp > 0) {
-		itoa(current_temp, retnbuf, 10);
-		//}
-		//printf(">%s<", retnbuf); 
+		char temp[10];
+		memset(temp, 0, 10);
+		current_temp = interface(3, args, temp);
+		memcpy(retnbuf, temp, sizeof(temp));
 	} else if (strcmp(recvbuf, "airconON\n") == 0) {
 		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
 		args[1] = "write";
 		args[2] = "3";
-		interface(3, args);
+		interface(3, args, 0);
 	} else if (strcmp(recvbuf, "airconOFF\n") == 0) {
 		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
 		args[1] = "write";
 		args[2] = "4";
-		interface(3, args);	
+		interface(3, args, 0);
 	} else if (strcmp(recvbuf, "toggle light\n") == 0) {
 		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
 		args[1] = "write";
 		args[2] = "5";
-		interface(3, args);	
+		interface(3, args, 0);	
 	} else if (strcmp(recvbuf, "switch light\n") == 0) {
 		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
 		args[1] = "write";
 		args[2] = "6";
-		interface(3, args);	
+		interface(3, args, 0);	
 	} else {
 		Beep(200, 600);
 		printf("unimplemented:%s", recvbuf);
