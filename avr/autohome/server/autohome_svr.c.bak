@@ -107,7 +107,7 @@ int main(void) {
         return 1;
     }
 
-		printf("Listening on %s:%s\n", szLocalIP, DEFAULT_PORT);
+		printf("Listening on %s:%s...\n", szLocalIP, DEFAULT_PORT);
 
     // Accept a client socket (blocking)
     ClientSocket = accept(ListenSocket, NULL, NULL);

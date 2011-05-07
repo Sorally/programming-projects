@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<section name="FileSystemImportWizard">
+		<item value="false" key="WizardFileSystemResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"/>
+		<item value="false" key="WizardFileSystemResourceImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID"/>
+		<list key="WizardFileSystemResourceImportPage1.STORE_SOURCE_NAMES_ID">
+			<item value="d:\Users\rob\Desktop\de.vogella.android.temperature\res\values"/>
+			<item value="d:\Users\rob\Desktop\de.vogella.android.temperature\res\layout"/>
+			<item value="d:\Users\rob\Desktop\de.vogella.android.temperature\res\menu"/>
+		</list>
+	</section>
 	<section name="WorkbenchPreferenceDialogSettings">
 		<item value="15" key="DIALOG_Y_ORIGIN"/>
 		<item value="195" key="DIALOG_X_ORIGIN"/>
@@ -11,5 +20,10 @@
 		</list>
 	</section>
 	<section name="ImportExportAction">
+		<item value="org.eclipse.wst.xml.ui.internal.wizards.ImportXMLCatalogWizard" key="ImportExportPage.STORE_SELECTED_IMPORT_WIZARD_ID"/>
+		<list key="ImportExportPage.STORE_EXPANDED_IMPORT_CATEGORIES">
+			<item value="org.eclipse.ui.Basic"/>
+			<item value="org.eclipse.wst.XMLCategory"/>
+		</list>
 	</section>
 </section>
