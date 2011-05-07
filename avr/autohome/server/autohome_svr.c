@@ -45,6 +45,20 @@ int main(void) {
 	int open_connection = 1;
 	SYSTEMTIME lt;
 
+	// Get local IP address
+	char szHostName[DEFAULT_BUFLEN];
+	struct hostent *host_entry;
+	char * szLocalIP;
+
+	gethostname(szHostName, DEFAULT_BUFLEN);
+	host_entry = gethostbyname(szHostName);
+	szLocalIP = inet_ntoa(*(struct in_addr *)*host_entry->h_addr_list);
+
+	// print welcome message
+	GetLocalTime(&lt);
+	printf("[%02d.%02d.%02d %02d:%02d:%02d] starting up on %s:%s\n", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond, szLocalIP, DEFAULT_PORT);
+
+
 start:
 
 	// Initialize Winsock
@@ -68,14 +82,6 @@ start:
 		WSACleanup();
 		return 1;
 	}
-
-	// Get local IP address
-	char szHostName[255];
-	struct hostent *host_entry;
-	char * szLocalIP;
-	gethostname(szHostName, 255);
-	host_entry = gethostbyname(szHostName);
-	szLocalIP = inet_ntoa (*(struct in_addr *)*host_entry->h_addr_list);
 
 	// Create a SOCKET for connecting to server
 	ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
@@ -106,12 +112,6 @@ start:
 		return 1;
 	}
 
-	// print welcome message
-	GetLocalTime(&lt);
-	printf("[%02d.%02d.%02d %02d:%02d:%02d] Listening on %s:%s\n", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond, szLocalIP, DEFAULT_PORT);
-
-	//printf("Listening on %s:%s\n", szLocalIP, DEFAULT_PORT);
-
 	// Accept a client socket (blocking)
 	ClientSocket = accept(ListenSocket, NULL, NULL);
 
@@ -126,105 +126,103 @@ start:
 	closesocket(ListenSocket);
 	
 	// Receive until the peer shuts down the connection
-	do {
-		iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-		if (iResult <= 0) {
-			printf("recv failed with error: %d\n", WSAGetLastError());
-			closesocket(ClientSocket);
-			WSACleanup();
-			//return 1;
-			goto start;
-		}
 
-
-		GetLocalTime(&lt);
-		memset(retnbuf, 0, DEFAULT_BUFLEN);
-		printf("[%02d.%02d.%02d %02d:%02d:%02d] ", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond);
-
-		//printf("Bytes received: %d\n", iResult);
-
-		if (recvbuf[0] == 'd' && recvbuf[1] == 'i' && recvbuf[2] == 'e') {
-			Beep(900, 100);
-			Beep(800, 100);
-			Beep(700, 100);
-			Beep(600, 100);
-			Beep(500, 100);
-			Beep(400, 100);
-
-			printf("Received die command, so long old friend\n");
-			open_connection = 0;
-			closesocket(ClientSocket);
-			WSACleanup();
-			return 1;
-		}
-
-		if (strcmp(recvbuf, "temperature\n") == 0) {
-			//int i = 1;
-			//HANDLE hThread1 = CreateThread(NULL, 0, msgbox, &recvbuf, 0, 0);
-			int current_temp;
-
-			Beep(500, 100);
-			printf(recvbuf);
-			char *args[3];
-			args[0] = 0;
-			args[1] = "read";
-			args[2] = "2";
-			current_temp = interface(3, args);
-			//if (current_temp > 0) {
-			itoa(current_temp, retnbuf, 10);
-			//}
-			//printf(">%s<", retnbuf); 
-		} else if (strcmp(recvbuf, "airconON\n") == 0) {
-			Beep(600, 100);
-			printf(recvbuf);
-			char *args[3];
-			args[0] = 0;
-			args[1] = "write";
-			args[2] = "3";
-			interface(3, args);
-		} else if (strcmp(recvbuf, "airconOFF\n") == 0) {
-			Beep(700, 100);
-			printf(recvbuf);
-			char *args[3];
-			args[0] = 0;
-			args[1] = "write";
-			args[2] = "4";
-			interface(3, args);	
-		} else if (strcmp(recvbuf, "toggle light\n") == 0) {
-			Beep(800, 100);
-			printf(recvbuf);
-			char *args[3];
-			args[0] = 0;
-			args[1] = "write";
-			args[2] = "5";
-			interface(3, args);	
-		} else if (strcmp(recvbuf, "switch light\n") == 0) {
-			Beep(900, 100);
-			printf(recvbuf);
-			char *args[3];
-			args[0] = 0;
-			args[1] = "write";
-			args[2] = "6";
-			interface(3, args);	
-		} else {
-			Beep(100, 300);
-			printf("unimplemented:%s", recvbuf);
-		}
-
-		// Echo the buffer back to the sender
-		iSendResult = send(ClientSocket, retnbuf, strlen(retnbuf), 0);
-		if (iSendResult == SOCKET_ERROR) {
-			printf("send failed with error: %d\n", WSAGetLastError());
-			closesocket(ClientSocket);
-			WSACleanup();
-			return 1;
-		}
-
+	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+	if (iResult <= 0) {
+		printf("recv failed with error: %d\n", WSAGetLastError());
 		closesocket(ClientSocket);
 		WSACleanup();
-		iResult = 0;
-		//printf("Bytes sent: %d\n", iSendResult);
-	} while (iResult > 0);
+		//return 1;
+		goto start;
+	}
+
+
+	GetLocalTime(&lt);
+	memset(retnbuf, 0, DEFAULT_BUFLEN);
+	printf("[%02d.%02d.%02d %02d:%02d:%02d] ", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond);
+
+	//printf("Bytes received: %d\n", iResult);
+
+	if (recvbuf[0] == 'd' && recvbuf[1] == 'i' && recvbuf[2] == 'e') {
+		Beep(900, 100);
+		Beep(800, 100);
+		Beep(700, 100);
+		Beep(600, 100);
+		Beep(500, 100);
+		Beep(400, 100);
+
+		printf("Received die command, so long old friend\n");
+		open_connection = 0;
+		closesocket(ClientSocket);
+		WSACleanup();
+		return 1;
+	}
+
+	if (strcmp(recvbuf, "temperature\n") == 0) {
+		//int i = 1;
+		//HANDLE hThread1 = CreateThread(NULL, 0, msgbox, &recvbuf, 0, 0);
+		int current_temp;
+
+		Beep(500, 100);
+		printf(recvbuf);
+		char *args[3];
+		args[0] = 0;
+		args[1] = "read";
+		args[2] = "2";
+		current_temp = interface(3, args);
+		//if (current_temp > 0) {
+		itoa(current_temp, retnbuf, 10);
+		//}
+		//printf(">%s<", retnbuf); 
+	} else if (strcmp(recvbuf, "airconON\n") == 0) {
+		Beep(600, 100);
+		printf(recvbuf);
+		char *args[3];
+		args[0] = 0;
+		args[1] = "write";
+		args[2] = "3";
+		interface(3, args);
+	} else if (strcmp(recvbuf, "airconOFF\n") == 0) {
+		Beep(700, 100);
+		printf(recvbuf);
+		char *args[3];
+		args[0] = 0;
+		args[1] = "write";
+		args[2] = "4";
+		interface(3, args);	
+	} else if (strcmp(recvbuf, "toggle light\n") == 0) {
+		Beep(800, 100);
+		printf(recvbuf);
+		char *args[3];
+		args[0] = 0;
+		args[1] = "write";
+		args[2] = "5";
+		interface(3, args);	
+	} else if (strcmp(recvbuf, "switch light\n") == 0) {
+		Beep(900, 100);
+		printf(recvbuf);
+		char *args[3];
+		args[0] = 0;
+		args[1] = "write";
+		args[2] = "6";
+		interface(3, args);	
+	} else {
+		Beep(100, 300);
+		printf("unimplemented:%s", recvbuf);
+	}
+
+	// Echo the buffer back to the sender
+	iSendResult = send(ClientSocket, retnbuf, strlen(retnbuf), 0);
+	if (iSendResult == SOCKET_ERROR) {
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(ClientSocket);
+		WSACleanup();
+		return 1;
+	}
+
+	closesocket(ClientSocket);
+	WSACleanup();
+	//printf("Bytes sent: %d\n", iSendResult);
 
 	goto start;
 
