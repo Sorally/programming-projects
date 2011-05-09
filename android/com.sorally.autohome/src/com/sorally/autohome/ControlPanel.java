@@ -1,16 +1,14 @@
 package com.sorally.autohome;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
-//import android.widget.EditText;
-//import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-//import android.app.AlertDialog;
-/////
-//import android.widget.Button;
-//import android.content.DialogInterface;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,8 +19,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-//import android.view.ContextMenu;  
-//import android.view.ContextMenu.ContextMenuInfo; 
 
 
 public class ControlPanel extends Activity {
@@ -48,20 +44,37 @@ public class ControlPanel extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getTitle().equals("wi-fi")) {
-			serverAddress = "192.168.11.2";
-			Toast.makeText(this, "Server address set to 192.168.11.2", Toast.LENGTH_SHORT).show();
-		} else if (item.getTitle().equals("Internet")) {
-			serverAddress = "sorally.dyndns.org";
-			Toast.makeText(this, "Server address set to sorally.dyndns.org", Toast.LENGTH_SHORT).show();
-		} else if (item.getTitle().equals("Kill Server")) {
-			die();
+		if (item.getTitle().equals("Kill Server")) {
+            AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
+            alertbox.setMessage("Really?");
+            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+        			die();
+                    Toast.makeText(getApplicationContext(), "Server killed :O", Toast.LENGTH_SHORT).show();
+                }
+            });
+                
+            alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                    //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
+                }
+            });
+            alertbox.show();
 		}
 		return true;
 	}
 	
+
 	public boolean connectTo() {
-		// TODO Auto-generated method stub
+		
+		ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+		NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		if (mWifi.isConnected()) {
+			serverAddress = "192.168.11.2";
+		} else {
+			serverAddress = "sorally.dyndns.org";
+		}
+		
 		try {
       		s = new Socket(serverAddress, 27015);
 	        //outgoing stream redirect to socket
@@ -117,7 +130,7 @@ public class ControlPanel extends Activity {
 	public void sendMsg(String string, int getResponse) {
 			
 		if (!connectTo()) {
-			Toast.makeText(this, "zzzz", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "could not connect to " + serverAddress, Toast.LENGTH_SHORT).show();
 			return;
 		}
 		output.println(string);

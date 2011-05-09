@@ -32,6 +32,21 @@ DWORD WINAPI msgbox(LPVOID iValue) {
 	return 0;
 }
 
+
+/******************************************************************************
+ * log()
+ *
+ * prints timestamp to standard out
+ *****************************************************************************/
+void timestamp(void) {
+	SYSTEMTIME lt;
+	GetLocalTime(&lt);
+
+	printf("[%02d.%02d.%02d %02d:%02d:%02d] ", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond);
+
+}
+
+
 /******************************************************************************
  * main()
  *
@@ -46,8 +61,6 @@ int main(int argc, char* argv[]) {
 	char retnbuf[DEFAULT_BUFLEN];
 	int iResult, iSendResult;
 	int recvbuflen = DEFAULT_BUFLEN;
-	int open_connection = 1;
-	SYSTEMTIME lt;
 	int server_started = 0;
 
 start:
@@ -71,8 +84,8 @@ start:
 		szLocalIP = inet_ntoa(*(struct in_addr *)*host_entry->h_addr_list);
 
 		// print welcome message
-		GetLocalTime(&lt);
-		printf("[%02d.%02d.%02d %02d:%02d:%02d] server starting on %s:%s\n", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond, szLocalIP, DEFAULT_PORT);
+		timestamp();
+		printf("starting server on %s:%s\n", szLocalIP, DEFAULT_PORT);
 		server_started = 1;
 	}
 
@@ -85,6 +98,7 @@ start:
 	// Resolve the server address and port
 	iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
 	if ( iResult != 0 ) {
+		timestamp();
 		printf("getaddrinfo failed with error: %d\n", iResult);
 		WSACleanup();
 		return 1;
@@ -93,6 +107,7 @@ start:
 	// Create a SOCKET for connecting to server
 	ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 	if (ListenSocket == INVALID_SOCKET) {
+		timestamp();
 		printf("socket failed with error: %ld\n", (long) WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
@@ -102,6 +117,7 @@ start:
 	// Setup the TCP listening socket
 	iResult = bind( ListenSocket, result->ai_addr, (int)result->ai_addrlen);
 	if (iResult == SOCKET_ERROR) {
+		timestamp();
 		printf("bind failed with error: %d\n", WSAGetLastError());
 		freeaddrinfo(result);
 		closesocket(ListenSocket);
@@ -113,6 +129,7 @@ start:
 	iResult = listen(ListenSocket, SOMAXCONN);
 
 	if (iResult == SOCKET_ERROR) {
+		timestamp();
 		printf("listen failed with error: %d\n", WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
@@ -123,6 +140,7 @@ start:
 	ClientSocket = accept(ListenSocket, NULL, NULL);
 
 	if (ClientSocket == INVALID_SOCKET) {
+		timestamp();
 		printf("accept failed with error: %d\n", WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
@@ -136,16 +154,13 @@ start:
 
 	iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 	if (iResult <= 0) {
+		timestamp();
 		printf("recv failed with error: %d\n", WSAGetLastError());
 		closesocket(ClientSocket);
 		WSACleanup();
 		//return 1;
 		goto start;
 	}
-
-	GetLocalTime(&lt);
-	memset(retnbuf, 0, DEFAULT_BUFLEN);
-	printf("[%02d.%02d.%02d %02d:%02d:%02d] ", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond);
 
 	//printf("Bytes received: %d\n", iResult);
 
@@ -156,18 +171,20 @@ start:
 		Beep(600, 100);
 		Beep(500, 100);
 		Beep(400, 100);
-
+		
+		timestamp();
 		printf("Received die command, so long old friend\n");
-		open_connection = 0;
-		goto cleanup;
+		closesocket(ClientSocket);
+		WSACleanup();
+		return 0;
 	}
-
-	if (strcmp(recvbuf, "temperature\n") == 0) {
+	
+	recvbuf[strlen(recvbuf) - 1] = 0;
+	if (strcmp(recvbuf, "temperature") == 0) {		// temperature
 		//int i = 1;
 		//HANDLE hThread1 = CreateThread(NULL, 0, msgbox, &recvbuf, 0, 0);
 		int current_temp;
 
-		printf(recvbuf);
 		char *args[3];
 		args[0] = 0;
 		args[1] = "read";
@@ -176,44 +193,55 @@ start:
 		memset(temp, 0, 10);
 		current_temp = interface(3, args, temp);
 		memcpy(retnbuf, temp, sizeof(temp));
-	} else if (strcmp(recvbuf, "airconON\n") == 0) {
-		printf(recvbuf);
+		timestamp();
+		printf("%s:", recvbuf);
+		printf("%s\n", temp);
+	} else if (strcmp(recvbuf, "airconON") == 0) {		//airconON
+		timestamp();
+		printf("%s\n", recvbuf);
 		char *args[3];
 		args[0] = 0;
 		args[1] = "write";
 		args[2] = "3";
 		interface(3, args, 0);
-	} else if (strcmp(recvbuf, "airconOFF\n") == 0) {
-		printf(recvbuf);
+	} else if (strcmp(recvbuf, "airconOFF") == 0) {		//airconOFF
+		timestamp();
+		printf("%s\n", recvbuf);
 		char *args[3];
 		args[0] = 0;
 		args[1] = "write";
 		args[2] = "4";
 		interface(3, args, 0);
-	} else if (strcmp(recvbuf, "toggle light\n") == 0) {
-		printf(recvbuf);
+	} else if (strcmp(recvbuf, "toggle light") == 0) {		//toggle light
+		timestamp();
+		printf("%s\n", recvbuf);
 		char *args[3];
 		args[0] = 0;
 		args[1] = "write";
 		args[2] = "5";
 		interface(3, args, 0);	
-	} else if (strcmp(recvbuf, "switch light\n") == 0) {
-		printf(recvbuf);
+	} else if (strcmp(recvbuf, "switch light") == 0) {		//switch light
+		timestamp();
+		printf("%s\n", recvbuf);
 		char *args[3];
 		args[0] = 0;
 		args[1] = "write";
 		args[2] = "6";
-		interface(3, args, 0);	
+		interface(3, args, 0);
 	} else {
 		Beep(200, 600);
-		printf("unimplemented:%s", recvbuf);
+		timestamp();
+		printf("unknown command:%s\n", recvbuf);
 	}
 
 	// Echo the buffer back to the sender
 	iSendResult = send(ClientSocket, retnbuf, strlen(retnbuf), 0);
 	if (iSendResult == SOCKET_ERROR) {
+		timestamp();
 		printf("send failed with error: %d\n", WSAGetLastError());
-		goto cleanup;
+		closesocket(ClientSocket);
+		WSACleanup();
+		return 1;
 	}
 
 	closesocket(ClientSocket);
@@ -225,12 +253,14 @@ start:
 	// shutdown the connection since we're done
 	iResult = shutdown(ClientSocket, SD_SEND);
 	if (iResult == SOCKET_ERROR) {
+		timestamp();
 		printf("shutdown failed with error: %d\n", WSAGetLastError());
-		goto cleanup;
+		closesocket(ClientSocket);
+		WSACleanup();
+		return 0;
 	}
 
-cleanup:
-	// cleanup
+	// clean up
 	closesocket(ClientSocket);
 	WSACleanup();
 	return 0;
