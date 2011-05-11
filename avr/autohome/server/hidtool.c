@@ -112,7 +112,8 @@ int interface(int argc, char **argv, char *temperature) {
 			pos += hexread(buffer + pos, argv[i], sizeof(buffer) - pos);
 		}
 		if((err = usbhidSetReport(dev, buffer, sizeof(buffer))) != 0) {   /* add a dummy report ID */
-			fprintf(stderr, "error writing data: %s\n", usbErrorMessage(err));
+			timestamp();
+			printf("error writing data: %s\n", usbErrorMessage(err));
 		}
 	} else {
 		usage(argv[0]);
@@ -121,5 +122,3 @@ int interface(int argc, char **argv, char *temperature) {
 	usbhidCloseDevice(dev);
 	return 0;
 }
-
-/* ------------------------------------------------------------------------- */

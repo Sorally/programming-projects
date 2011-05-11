@@ -107,23 +107,27 @@ static uchar    bytesRemaining;
  */
 uchar   usbFunctionRead(uchar *data, uchar len) {
 
-	i2c_start((DEVICE_ID << 1) + I2C_WRITE);
-	i2c_write(1);
-	i2c_stop();
+	//i2c_start((DEVICE_ID << 1) + I2C_WRITE);
+	//i2c_write(1);
+	//i2c_stop();
 
-	_delay_ms(25);
+	//_delay_ms(25);
+	//memset(data, 0x31, 6);
 
+//working!
+	// get temperature
 	i2c_start((DEVICE_ID << 1) + I2C_READ);
+	_delay_ms(25);
 	data[0] = i2c_read(1);
+	data[1] = i2c_read(1);
+	data[2] = i2c_read(1);
 	data[3] = i2c_read(1);
 	data[4] = i2c_read(1);
 	data[5] = i2c_read(0);
 	i2c_stop();
 
-    return 6;
 
-
-
+   return 6;
 
 /*
     if(len > bytesRemaining)
@@ -170,6 +174,16 @@ uchar   usbFunctionWrite(uchar *data, uchar len)
 		i2c_stop();
 
 	}
+
+
+/*
+	PORTB ^= 0b0010;
+
+	i2c_start((DEVICE_ID << 1) + I2C_WRITE);
+	i2c_write(0x09);
+	i2c_stop();
+*/
+
 
 	return 1;
 
@@ -265,6 +279,10 @@ int main(void) {
     usbDeviceConnect();
 
 	DDRB &= ~_BV(DDB1);			// input from slave to indicate a msg is waiting
+
+/////////
+//	DDRB = 0b0010; // set pb1 as output
+/////////
 	
 	sei();
 

@@ -12,7 +12,8 @@ usbdrv.o: ../usbdrv/usbdrv.c ../usbdrv/usbportability.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/lock.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/pgmspace.h \
   d:\winavr-20100110\bin\../lib/gcc/avr/4.3.3/include/stddef.h \
-  ../usbdrv/usbdrv.h d:\Users\rob\Desktop\autohome\firmware\./usbconfig.h \
+  ../usbdrv/usbdrv.h \
+  D:\programming\src\avr\autohome\firmware\./usbconfig.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/eeprom.h \
   ../usbdrv/oddebug.h
 
@@ -46,7 +47,7 @@ d:\winavr-20100110\bin\../lib/gcc/avr/4.3.3/include/stddef.h:
 
 ../usbdrv/usbdrv.h:
 
-d:\Users\rob\Desktop\autohome\firmware\./usbconfig.h:
+D:\programming\src\avr\autohome\firmware\./usbconfig.h:
 
 d:/winavr-20100110/lib/gcc/../../avr/include/avr/eeprom.h:
 

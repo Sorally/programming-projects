@@ -10,11 +10,11 @@ osccal.o: ../libs-device/osccal.c \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/version.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/fuse.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/lock.h \
-  d:\Users\rob\Desktop\autohome\firmware\usbdrv/usbdrv.h \
-  d:\Users\rob\Desktop\autohome\firmware\./usbconfig.h \
+  D:\programming\src\avr\autohome\firmware\usbdrv/usbdrv.h \
+  D:\programming\src\avr\autohome\firmware\./usbconfig.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/eeprom.h \
   d:\winavr-20100110\bin\../lib/gcc/avr/4.3.3/include/stddef.h \
-  d:\Users\rob\Desktop\autohome\firmware\usbdrv/usbportability.h \
+  D:\programming\src\avr\autohome\firmware\usbdrv/usbportability.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/pgmspace.h
 
 d:/winavr-20100110/lib/gcc/../../avr/include/avr/io.h:
@@ -39,14 +39,14 @@ d:/winavr-20100110/lib/gcc/../../avr/include/avr/fuse.h:
 
 d:/winavr-20100110/lib/gcc/../../avr/include/avr/lock.h:
 
-d:\Users\rob\Desktop\autohome\firmware\usbdrv/usbdrv.h:
+D:\programming\src\avr\autohome\firmware\usbdrv/usbdrv.h:
 
-d:\Users\rob\Desktop\autohome\firmware\./usbconfig.h:
+D:\programming\src\avr\autohome\firmware\./usbconfig.h:
 
 d:/winavr-20100110/lib/gcc/../../avr/include/avr/eeprom.h:
 
 d:\winavr-20100110\bin\../lib/gcc/avr/4.3.3/include/stddef.h:
 
-d:\Users\rob\Desktop\autohome\firmware\usbdrv/usbportability.h:
+D:\programming\src\avr\autohome\firmware\usbdrv/usbportability.h:
 
 d:/winavr-20100110/lib/gcc/../../avr/include/avr/pgmspace.h:

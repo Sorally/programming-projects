@@ -8,7 +8,8 @@ usbdrvasm.o: ../usbdrv/usbdrvasm.S ../usbdrv/usbportability.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/version.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/fuse.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/lock.h \
-  ../usbdrv/usbdrv.h d:\Users\rob\Desktop\autohome\firmware\./usbconfig.h \
+  ../usbdrv/usbdrv.h \
+  D:\programming\src\avr\autohome\firmware\./usbconfig.h \
   ../usbdrv/usbdrvasm165.inc ../usbdrv/asmcommon.inc
 
 ../usbdrv/usbportability.h:
@@ -33,7 +34,7 @@ d:/winavr-20100110/lib/gcc/../../avr/include/avr/lock.h:
 
 ../usbdrv/usbdrv.h:
 
-d:\Users\rob\Desktop\autohome\firmware\./usbconfig.h:
+D:\programming\src\avr\autohome\firmware\./usbconfig.h:
 
 ../usbdrv/usbdrvasm165.inc:
 

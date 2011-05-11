@@ -178,7 +178,5 @@ extern unsigned char i2c_read(unsigned char ack);
 
 
 
-
-
 /**@}*/
 #endif

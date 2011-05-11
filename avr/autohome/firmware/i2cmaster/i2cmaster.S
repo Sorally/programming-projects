@@ -84,15 +84,14 @@
 ; R. Altenburg
 	.global i2c_delay_T2
 	.func i2c_delay_T2	; delay 5.0 microsec with 8 Mhz crystal	
-i2c_delay_T2:		; 4 cycles
-	ldi r16, 0x0	; 1   "
+i2c_delay_T2:				; 4 cycles
+	ldi r16, 0x0			; 1   "
 i2c_delay_loop:	
-	inc r16     	; 1   "
-;	cpi r16, 0x7	; 1	  "
-	cpi r16, 0xf	; 1	  "
-	brne  i2c_delay_loop; 1 false, 2 true
-	nop				; 1   cycle
-	ret				; 3   "
+	inc r16    			 	; 1   "
+	cpi r16, 0x20			; 1	  "
+	brne  i2c_delay_loop	; 1 false, 2 true
+	nop						; 1   cycle
+	ret						; 3   "
 	.endfunc		; total 40 cyles = 5.0 microsec with 8 Mhz crystal 
 
 ;*************************************************************************

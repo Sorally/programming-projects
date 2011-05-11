@@ -21,7 +21,7 @@
 int irmsg;
 char current_temp[4];
 unsigned char checksum;
-char msg;
+unsigned char msg;
 int IRledPin;
 int get_temperature;
 int HighByte, LowByte, TReading, SignBit, Tc_100, Whole, Fract;
@@ -31,7 +31,6 @@ int RECV_PIN = 11;
 IRrecv irrecv(RECV_PIN);
 int I2C_MASTER_ALERTER;
 decode_results results;
-char temperature[6];
 
 
 /****************************************************************************
@@ -49,6 +48,7 @@ void setup() {
   get_temperature = 10;
   int tmp = 0;
   msg = 0;
+
   irrecv.enableIRIn(); // Start the receiver
   Timer1.initialize(10000000); // 10 seconds
   Timer1.attachInterrupt(temperature_callback);
@@ -60,7 +60,6 @@ void setup() {
 
   Wire.onReceive(receiveData);  // register event
   Wire.onRequest(requestEvent); // register event
-  
   Serial.println("Ready");
 }
 
@@ -70,15 +69,16 @@ void setup() {
  *
  * called when the master requests data
  ****************************************************************************/
-
 void requestEvent() {
-   // working!
-    Wire.send(temperature);
-    
 
-    Serial.print("requestEvent:");
-    Serial.println(temperature);
-  
+    if (msg) {
+      Wire.send(msg);
+      Serial.println(msg, HEX);
+      msg = 0;
+    } else {
+      Wire.send(Whole);  // send current temperature as Whole number
+      Serial.println(Whole);
+    }
 }
 
 
@@ -89,12 +89,6 @@ void requestEvent() {
  ****************************************************************************/
 void receiveData(int numBytes) {
   
-  
-  msg = Wire.receive();  
-  digitalWrite(13, !digitalRead(13));
-  Serial.println(msg, HEX);
-  return;  
- 
   int i = 0;
   checksum = 0;
   int test = 0;
@@ -132,11 +126,10 @@ void receiveData(int numBytes) {
        
     }
 
-    Serial.print("received Data:");
+    //Serial.print("received Data:");
     Serial.print(msg, HEX);
     Serial.print(" ");
     Serial.println(test, HEX);
-    msg = 0;
   }
 }
 
@@ -227,9 +220,8 @@ void flash_master(int val) {
   delay(50);
 
   irmsg = val;
-  msg = val;
   digitalWrite(I2C_MASTER_ALERTER, HIGH);   // set the LED on
-  delay(5);
+  delay(1);
   digitalWrite(I2C_MASTER_ALERTER, LOW);    // set the LED off
 
 }
@@ -263,7 +255,7 @@ void loop() {
     
     irrecv.resume(); // Receive the next value
   }
-  //digitalWrite(13, LOW);
+  digitalWrite(13, LOW);
 
 }
 
@@ -317,26 +309,20 @@ void get_temp() {
   Fract = Tc_100 % 100;
 
   int temp_ptr = 0;
-  memset(temperature, 0, 6);
-  
-  //Whole *= SignBit?-1:1;
+  memset(temp, 0, 3);
 
-  if (SignBit) {
-    temperature[0] = '-';
-  } else {
-    temperature[0] = '+';
-  }
-  
-  if (Whole < 10) {
-    temperature[1] = '0';
-  }
-  
-  itoa(Whole, temperature + strlen(temperature), 10);
+  Whole *= SignBit?-1:1;
 
-  temperature[strlen(temperature)] = '.';
   
-  Fract = Fract / 10;
-  itoa(Fract, temperature + strlen(temperature), 10);
+
+  //itoa (Whole, temp + strlen(temp), 10);
+  //temp[strlen(temp)] = '.';
+  
+  //if (Fract < 10) {
+  //  temp[strlen(temp)] = '0'; 
+  //}
+
+  //itoa(Fract, temp + strlen(temp), 10);
 
   //strcpy(current_temp, temp);
   

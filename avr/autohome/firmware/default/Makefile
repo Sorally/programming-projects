@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Include Directories
-INCLUDES = -I"d:\Users\rob\Desktop\autohome\firmware\usbdrv" -I"d:\Users\rob\Desktop\autohome\firmware\." -I"d:\Users\rob\Desktop\autohome\firmware\libs-device" -I"d:\Users\rob\Desktop\autohome\firmware\i2cmaster" 
+INCLUDES = -I"D:\programming\src\avr\autohome\firmware\usbdrv" -I"D:\programming\src\avr\autohome\firmware\." -I"D:\programming\src\avr\autohome\firmware\libs-device" -I"D:\programming\src\avr\autohome\firmware\i2cmaster" 
 
 ## Objects that must be built in order to link
 OBJECTS = main.o oddebug.o usbdrv.o usbdrvasm.o i2cmaster.o osccal.o 

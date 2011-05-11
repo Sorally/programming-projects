@@ -17,10 +17,10 @@ main.o: ../main.c d:/winavr-20100110/lib/gcc/../../avr/include/avr/io.h \
   d:\winavr-20100110\bin\../lib/gcc/avr/4.3.3/include/stddef.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/string.h \
   d:/winavr-20100110/lib/gcc/../../avr/include/avr/pgmspace.h \
-  d:\Users\rob\Desktop\autohome\firmware\usbdrv/usbdrv.h \
-  d:\Users\rob\Desktop\autohome\firmware\./usbconfig.h \
-  d:\Users\rob\Desktop\autohome\firmware\usbdrv/usbportability.h \
-  d:\Users\rob\Desktop\autohome\firmware\i2cmaster/i2cmaster.h
+  D:\programming\src\avr\autohome\firmware\usbdrv/usbdrv.h \
+  D:\programming\src\avr\autohome\firmware\./usbconfig.h \
+  D:\programming\src\avr\autohome\firmware\usbdrv/usbportability.h \
+  D:\programming\src\avr\autohome\firmware\i2cmaster/i2cmaster.h
 
 d:/winavr-20100110/lib/gcc/../../avr/include/avr/io.h:
 
@@ -60,10 +60,10 @@ d:/winavr-20100110/lib/gcc/../../avr/include/string.h:
 
 d:/winavr-20100110/lib/gcc/../../avr/include/avr/pgmspace.h:
 
-d:\Users\rob\Desktop\autohome\firmware\usbdrv/usbdrv.h:
+D:\programming\src\avr\autohome\firmware\usbdrv/usbdrv.h:
 
-d:\Users\rob\Desktop\autohome\firmware\./usbconfig.h:
+D:\programming\src\avr\autohome\firmware\./usbconfig.h:
 
-d:\Users\rob\Desktop\autohome\firmware\usbdrv/usbportability.h:
+D:\programming\src\avr\autohome\firmware\usbdrv/usbportability.h:
 
-d:\Users\rob\Desktop\autohome\firmware\i2cmaster/i2cmaster.h:
+D:\programming\src\avr\autohome\firmware\i2cmaster/i2cmaster.h:

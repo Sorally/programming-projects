@@ -189,8 +189,8 @@ start:
 		args[0] = 0;
 		args[1] = "read";
 		args[2] = "2";
-		char temp[10];
-		memset(temp, 0, 10);
+		char temp[6];
+		memset(temp, 0, 6);
 		current_temp = interface(3, args, temp);
 		memcpy(retnbuf, temp, sizeof(temp));
 		timestamp();
